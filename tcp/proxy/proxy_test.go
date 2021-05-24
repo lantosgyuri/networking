@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"net"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -27,7 +28,7 @@ func TestProxy(t *testing.T) {
 
 		defer conn.Close()
 
-		buffer := make([]byte, 0)
+		buffer := make([]byte, 1024)
 		n, err := conn.Read(buffer)
 		if err != nil {
 			t.Error(err)
@@ -36,7 +37,6 @@ func TestProxy(t *testing.T) {
 
 		if string(buffer[:n]) == "Ping" {
 			_, err = conn.Write([]byte("Pong"))
-			t.Errorf("TEst Error %v", buffer[:n])
 			if err != nil {
 				t.Error(err)
 				return
@@ -57,11 +57,9 @@ func TestProxy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	wg.Add(1)
 	defer proxyServer.Close()
 
 	go func() {
-		defer wg.Done()
 		proxyFrom, err := proxyServer.Accept()
 		if err != nil {
 			t.Error(err)
@@ -94,8 +92,8 @@ func TestProxy(t *testing.T) {
 
 		_, err = sender.Write([]byte("Ping"))
 
-		buffer := make([]byte, 0)
-		n, err := sender.Read(buffer)
+		buffer := make([]byte, 1024)
+		_, err = sender.Read(buffer)
 		if err != nil {
 			t.Error(err)
 			return
@@ -103,8 +101,9 @@ func TestProxy(t *testing.T) {
 
 		actualMessage := string(buffer)
 
-		if string(buffer) != "Pong" {
-			t.Errorf("message should be Pong, not: %v, %v", actualMessage, n)
+		res := strings.Compare(actualMessage, "Pong")
+		if res != 0{
+			t.Errorf("message should be Pong, not: %v", actualMessage)
 		}
 
 		wg.Wait()
