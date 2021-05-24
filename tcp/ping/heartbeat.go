@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-// The connection lives as long a heartbeat is sent + 5 sec
+// The connection deadline extended with 5 second with a heartbeat
 
-func Breath() {
+func Heartbeat() {
 	done := make(chan struct{})
 	listener, err := net.Listen("tcp", "127.0.0.1:")
 	if err != nil {

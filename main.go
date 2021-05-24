@@ -1,9 +1,11 @@
 package main
 
-import "github.com/lantosgyuri/networking/ping"
+import (
+	ping2 "github.com/lantosgyuri/networking/tcp/ping"
+)
 
 func main() {
-	ping.Breath()
+	ping2.Heartbeat()
 }
 
 
