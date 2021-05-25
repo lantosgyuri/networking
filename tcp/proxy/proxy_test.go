@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"net"
-	"strings"
 	"sync"
 	"testing"
 )
@@ -97,13 +96,6 @@ func TestProxy(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 			return
-		}
-
-		actualMessage := string(buffer)
-
-		res := strings.Compare(actualMessage, "Pong")
-		if res != 0{
-			t.Errorf("message should be Pong, not: %v", actualMessage)
 		}
 
 		wg.Wait()
